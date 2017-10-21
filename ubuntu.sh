@@ -13,10 +13,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     sed -i 's/$/ universe/' /etc/apt/sources.list
 
     #essential stuff
-    apt -y --force-yes install git sudo man vim build-essential wget unzip
-
-    #maybe dont need, add later if do:
-    #curl autoconf libtool 
+    apt -y --force-yes install git sudo man vim build-essential wget unzip curl autoconf libtool pkg-config libgd2-xpm-dev subversion
  
     mkdir /apps
     cd /apps
@@ -27,31 +24,34 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     rm Miniconda2-latest-Linux-x86_64.sh
     sudo ln -s /apps/miniconda/bin/python2.7 /usr/bin/python
     PATH="/apps/miniconda/bin:$PATH"
-    conda install -y -c bioconda blast
+    conda install -y -c bioconda blast-legacy
     conda install -y -c bioconda emboss
     conda install -y -c bioconda bedtools
-  
+ 
+    #so we dont get those stupid perl warnings
+    locale-gen en_US.UTF-8
+    
+    #cpanminus for zero-config cpan
+    wget -O - http://cpanmin.us | perl - --self-upgrade
+
     #Perl-modules for prophet
-    perl -MCPAN -e 'install Bio::Perl'
-    perl -MCPAN -e 'install SVG'
-    perl -MCPAN -e 'install GD'
-    perl -MCPAN -e 'install GD::SVG'
-    perl -MCPAN -e 'install Bio::Graphics'
-    perl -MCPAN -e 'install LWP::Simple'
-    perl -MCPAN -e 'install XML::Simple'
+    cpanm Bio::Perl
+    cpanm SVG
+    cpanm GD
+    cpanm GD::SVG
+    cpanm Bio::Graphics
+    cpanm LWP::Simple
+    cpanm XML::Simple
 
     git clone https://github.com/jaumlrc/ProphET.git prophet
     cd prophet
     ./INSTALL.pl
 
     #cleanup    
+    conda clean -a -y
 
     #create a directory to work in
     mkdir /work
-
-    #so we dont get those stupid perl warnings
-    locale-gen en_US.UTF-8
-
     #so we dont get those stupid worning on hpc/pbs
     mkdir /extra
     mkdir /xdisk
